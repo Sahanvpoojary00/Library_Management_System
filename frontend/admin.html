@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Smart Library System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar glass-panel">
+      <a href="index.html" class="sidebar-logo">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>Smart Library</span>
+      </a>
+      
+      <ul class="sidebar-menu">
+        <li>
+          <a class="menu-link active" data-section="overview-section">
+            <i class="fas fa-chart-pie"></i>
+            <span>Overview</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-link" data-section="inventory-section">
+            <i class="fas fa-boxes-stacked"></i>
+            <span>Book Inventory</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-link" data-section="issue-section">
+            <i class="fas fa-paper-plane"></i>
+            <span>Issue Book</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-link" data-section="reservations-section">
+            <i class="fas fa-bookmark"></i>
+            <span>Reservations</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-link" data-section="history-section">
+            <i class="fas fa-history"></i>
+            <span>Transaction Logs</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button onclick="handleLogout()" class="btn btn-danger" style="width: 100%; border-radius: 12px; gap: 8px;">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+      
+      <!-- Top Profile & Header Bar -->
+      <div class="top-bar">
+        <div>
+          <h2 class="text-gradient">Librarian Console</h2>
+          <p style="color: var(--text-muted); font-size: 14px;">Welcome back, System Administrator</p>
+        </div>
+        <div class="user-profile">
+          <div class="user-info" style="text-align: right;">
+            <h5 id="admin-name" style="margin: 0;">Librarian</h5>
+            <span style="font-size: 12px; color: var(--primary); font-weight: 600;">System Administrator</span>
+          </div>
+          <div class="user-avatar" id="admin-avatar-char">A</div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <section class="stats-grid">
+        <div class="glass-card stat-card">
+          <div class="stat-info">
+            <h3 id="metric-total-books">0</h3>
+            <p>Total Books</p>
+          </div>
+          <div class="stat-icon primary"><i class="fas fa-book"></i></div>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-info">
+            <h3 id="metric-avail-books">0</h3>
+            <p>Available Books</p>
+          </div>
+          <div class="stat-icon success"><i class="fas fa-check-circle"></i></div>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-info">
+            <h3 id="metric-active-borrows">0</h3>
+            <p>Active Loans</p>
+          </div>
+          <div class="stat-icon warning"><i class="fas fa-hourglass-half"></i></div>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-info">
+            <h3 id="metric-reservations">0</h3>
+            <p>Reservations</p>
+          </div>
+          <div class="stat-icon accent"><i class="fas fa-bookmark"></i></div>
+        </div>
+      </section>
+
+      <!-- Dashboard Sections -->
+
+      <!-- 1. OVERVIEW SECTION -->
+      <div id="overview-section" class="dashboard-section active">
+        <div class="glass-card">
+          <h3 style="margin-bottom: 20px;"><i class="fas fa-list-check" style="color: var(--primary); margin-right: 8px;"></i> Currently Checked Out Books</h3>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Trans ID</th>
+                  <th>Book Details</th>
+                  <th>Student Info</th>
+                  <th>Issue Date</th>
+                  <th>Due Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="active-borrows-table-body">
+                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Fetching transactions...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. BOOK INVENTORY SECTION -->
+      <div id="inventory-section" class="dashboard-section">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px; align-items: start;">
+          <!-- Add Book Form -->
+          <div class="glass-card">
+            <h3 style="margin-bottom: 20px;"><i class="fas fa-plus-circle" style="color: var(--primary); margin-right: 8px;"></i> Add New Book</h3>
+            <form id="add-book-form">
+              <div class="form-group">
+                <label class="form-label">Book Title</label>
+                <input type="text" id="book-title" class="form-control" placeholder="The Clean Coder" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Author Name</label>
+                <input type="text" id="book-author" class="form-control" placeholder="Robert C. Martin" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Category</label>
+                <input type="text" id="book-category" class="form-control" placeholder="Computer Science" required>
+              </div>
+              <div class="form-group" style="margin-bottom: 24px;">
+                <label class="form-label">Copies Count</label>
+                <input type="number" id="book-quantity" class="form-control" placeholder="5" min="1" required>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-save"></i> Save Book
+              </button>
+            </form>
+          </div>
+          
+          <!-- Inventory Table -->
+          <div class="glass-card">
+            <h3 style="margin-bottom: 20px;"><i class="fas fa-table" style="color: var(--primary); margin-right: 8px;"></i> Catalog List</h3>
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th>Total</th>
+                    <th>Available</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-table-body">
+                  <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">Loading catalog...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. ISSUE BOOK SECTION -->
+      <div id="issue-section" class="dashboard-section">
+        <div class="glass-card" style="max-width: 600px;">
+          <h3 style="margin-bottom: 20px;"><i class="fas fa-hands" style="color: var(--primary); margin-right: 8px;"></i> Issue Book to Student</h3>
+          <form id="issue-book-form">
+            <div class="form-group">
+              <label class="form-label">Student Email Address</label>
+              <input type="email" id="issue-student-email" class="form-control" placeholder="student@library.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Select Book</label>
+              <select id="issue-book-select" class="form-control" required>
+                <option value="" disabled selected>Choose a book...</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 24px;">
+              <label class="form-label">Duration (Days)</label>
+              <input type="number" id="issue-duration" class="form-control" placeholder="14" min="1" value="14" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              <i class="fas fa-paper-plane"></i> Finalize Issue
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 4. RESERVATIONS SECTION -->
+      <div id="reservations-section" class="dashboard-section">
+        <div class="glass-card">
+          <h3 style="margin-bottom: 20px;"><i class="fas fa-clock-rotate-left" style="color: var(--primary); margin-right: 8px;"></i> Student Pre-bookings Queue</h3>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Queue ID</th>
+                  <th>Book Details</th>
+                  <th>Student Info</th>
+                  <th>Reserved Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="reservations-table-body">
+                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading reservation requests...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. HISTORY SECTION -->
+      <div id="history-section" class="dashboard-section">
+        <div class="glass-card">
+          <h3 style="margin-bottom: 20px;"><i class="fas fa-receipt" style="color: var(--primary); margin-right: 8px;"></i> All Transactions Log</h3>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Trans ID</th>
+                  <th>Book Title</th>
+                  <th>Student Name</th>
+                  <th>Issue Date</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="history-table-body">
+                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Loading logging ledger...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Edit Book Modal (Hidden Overlay) -->
+  <div class="modal-overlay" id="edit-book-modal">
+    <div class="glass-panel modal-box">
+      <div class="modal-header">
+        <h3><i class="fas fa-edit" style="color: var(--primary);"></i> Edit Book Details</h3>
+        <i class="fas fa-times close-modal" onclick="closeEditModal()"></i>
+      </div>
+      <form id="edit-book-form">
+        <input type="hidden" id="edit-book-id">
+        <div class="form-group">
+          <label class="form-label">Book Title</label>
+          <input type="text" id="edit-book-title" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Author Name</label>
+          <input type="text" id="edit-book-author" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <input type="text" id="edit-book-category" class="form-control" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Total Qty</label>
+            <input type="number" id="edit-book-quantity" class="form-control" min="0" required>
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Available Qty</label>
+            <input type="number" id="edit-book-available" class="form-control" min="0" required>
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button type="button" class="btn btn-secondary" onclick="closeEditModal()" style="flex: 1;">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="flex: 1;">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

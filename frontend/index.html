@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Library - Premium Academic Workspace</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="#" class="brand-logo-anim">
+      <div class="logo-grid">
+        <div class="logo-dot dot-1"></div>
+        <div class="logo-dot dot-2"></div>
+        <div class="logo-dot dot-3"></div>
+        <div class="logo-dot dot-4"></div>
+      </div>
+      <span style="font-size: 22px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">SmartLibrary</span>
+    </a>
+    <div class="nav-links">
+      <a href="login.html" class="btn btn-primary">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        <span>Portal Login</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero-section">
+    <div class="hero-content">
+      <span class="hero-badge">University Edition 3.0</span>
+      <h1>A Modern Hub for <span class="text-gradient">Academic Reading</span> & Operations</h1>
+      <p>Automate library inventory, track student borrowings, manage real-time reservations queues, and send return deadlines alerts via an elegant glassmorphic dashboard.</p>
+      
+      <div style="display: flex; gap: 16px;">
+        <a href="login.html" class="btn btn-primary">Enter Portal <i class="fas fa-arrow-right"></i></a>
+        <a href="#features" class="btn btn-secondary">Explore Capabilities</a>
+      </div>
+
+      <!-- Stats Counters Grid -->
+      <div class="stats-counter-grid">
+        <div>
+          <span class="counter-value" data-target="15000" data-suffix="+">0+</span>
+          <span class="counter-label">Total Books</span>
+        </div>
+        <div>
+          <span class="counter-value" data-target="450" data-suffix="+">0+</span>
+          <span class="counter-label">Active Readers</span>
+        </div>
+        <div>
+          <span class="counter-value" data-target="99" data-suffix=".8%">0.8%</span>
+          <span class="counter-label">Uptime SLA</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Multi-layered Parallax Visual Mockup -->
+    <div class="hero-visual">
+      
+      <!-- Layer 1: Core Dashboard (Deepest) -->
+      <div class="mockup-screen depth-layer depth-1" style="width: 440px; transform: rotate(-3deg) translateY(10px);">
+        <div class="mockup-header">
+          <div class="mockup-dot red"></div>
+          <div class="mockup-dot yellow"></div>
+          <div class="mockup-dot green"></div>
+          <span class="mockup-title">admin_dashboard.xml</span>
+        </div>
+        <div class="mockup-body" style="background: white; min-height: 220px; font-size: 13px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
+            <strong>Books Inventory</strong>
+            <span style="color: var(--primary); font-weight: 600;">+ New Book</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-radius: 8px; border-left: 3px solid var(--accent);">
+              <span>Clean Code</span>
+              <span class="status-badge success">In Stock</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: #f8fafc; border-radius: 8px; border-left: 3px solid var(--primary);">
+              <span>1984 (George Orwell)</span>
+              <span class="status-badge danger">Out of Stock</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 2: Overlapping Floating Graph Widget (Middle) -->
+      <div class="glass-panel depth-layer depth-2" style="width: 250px; padding: 18px; position: absolute; top: -50px; right: -20px; transform: rotate(5deg);">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 16px; align-items: center;">
+          <h5 style="font-size: 13px; font-weight: 700;">Issue Velocity</h5>
+          <span style="color: var(--success); font-size: 12px; font-weight: 600;"><i class="fas fa-trend-up"></i> +14%</span>
+        </div>
+        <div style="display: flex; align-items: flex-end; gap: 10px; height: 70px; padding-bottom: 10px; border-bottom: 1.5px solid rgba(0,0,0,0.05);">
+          <div style="flex: 1; height: 35%; background: var(--primary-light); border-radius: 4px;"></div>
+          <div style="flex: 1; height: 60%; background: var(--primary-light); border-radius: 4px;"></div>
+          <div style="flex: 1; height: 45%; background: var(--primary-light); border-radius: 4px;"></div>
+          <div style="flex: 1; height: 90%; background: var(--primary); border-radius: 4px;"></div>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px;"><i class="fas fa-clock"></i> Updated 3 mins ago</p>
+      </div>
+
+      <!-- Layer 3: Floating Overlay Notification (Topmost) -->
+      <div class="glass-panel glow-card depth-layer depth-3" style="width: 220px; padding: 14px; position: absolute; bottom: -30px; left: -30px; display: flex; align-items: center; gap: 12px; transform: rotate(-5deg); box-shadow: var(--shadow-lg);">
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--success-light); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 16px;">
+          <i class="fas fa-check"></i>
+        </div>
+        <div>
+          <h5 style="font-size: 13px; font-weight: 700; margin: 0;">Returned "1984"</h5>
+          <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Reservation queue updated</p>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Interactive Features Showcase -->
+  <section id="features" style="padding: 100px 8%; background: rgba(255,255,255,0.3); border-top: 1px solid var(--glass-border);">
+    <div style="text-align: center; margin-bottom: 60px;" data-aos="fade-up">
+      <span class="hero-badge">Feature Showcase</span>
+      <h2 style="font-size: 40px; margin-top: 10px;">Interactive System Preview</h2>
+      <p style="color: var(--text-muted); max-width: 600px; margin: 16px auto 0 auto;">Select modules below to view interface operations and responsive console mockups.</p>
+    </div>
+
+    <div style="text-align: center;">
+      <div class="showcase-tabs" data-aos="fade-up">
+        <div class="showcase-tab active" data-target="panel-librarian">Librarian Console</div>
+        <div class="showcase-tab" data-target="panel-student">Student Workspace</div>
+        <div class="showcase-tab" data-target="panel-queue">Queue Reservations</div>
+      </div>
+    </div>
+
+    <div class="showcase-panels" data-aos="zoom-in" data-aos-delay="200">
+      <!-- Tab 1: Librarian View -->
+      <div class="showcase-panel active" id="panel-librarian">
+        <div style="display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 50px; align-items: center;">
+          <div>
+            <h3 style="font-size: 26px; margin-bottom: 16px;">Complete Inventory CRUD & Loan Dispatcher</h3>
+            <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 15px;">Add, edit, or delete items within the library catalog. Instantly assign copies to students with specific return durations, calculate return deadlines, and track active checkouts.</p>
+            <a href="login.html" class="btn btn-secondary">Login as Admin</a>
+          </div>
+          <div class="mockup-screen">
+            <div class="mockup-header">
+              <div class="mockup-dot red"></div>
+              <div class="mockup-dot yellow"></div>
+              <div class="mockup-dot green"></div>
+              <span class="mockup-title">admin_borrowings.xml</span>
+            </div>
+            <div class="mockup-body" style="background: white;">
+              <table class="custom-table" style="font-size: 13px;">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Borrower</th>
+                    <th>Due Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Clean Code</strong></td>
+                    <td>student@library.com</td>
+                    <td><span class="status-badge warning">14 Days Left</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>The Great Gatsby</strong></td>
+                    <td>alice@library.com</td>
+                    <td><span class="status-badge danger">Overdue</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Student View -->
+      <div class="showcase-panel" id="panel-student">
+        <div style="display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 50px; align-items: center;">
+          <div>
+            <h3 style="font-size: 26px; margin-bottom: 16px;">Personal Reading Workbench & Search Catalog</h3>
+            <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 15px;">Search through book inventories by title, author, or category with instant debounced updates. Monitor return deadlines, view personal history lists, and cancel pending reservations.</p>
+            <a href="login.html" class="btn btn-secondary">Create Student Account</a>
+          </div>
+          <div class="mockup-screen">
+            <div class="mockup-header">
+              <div class="mockup-dot red"></div>
+              <div class="mockup-dot yellow"></div>
+              <div class="mockup-dot green"></div>
+              <span class="mockup-title">student_catalog.xml</span>
+            </div>
+            <div class="mockup-body" style="background: #f8fafc; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="glass-card" style="padding: 16px; background: white;">
+                <span class="book-category" style="font-size: 10px;">Self-Help</span>
+                <h4 style="font-size: 15px; margin-bottom: 4px;">Deep Work</h4>
+                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Cal Newport</p>
+                <span class="status-badge success" style="font-size: 10px;">2 Available</span>
+              </div>
+              <div class="glass-card" style="padding: 16px; background: white;">
+                <span class="book-category" style="font-size: 10px;">Algorithms</span>
+                <h4 style="font-size: 15px; margin-bottom: 4px;">CLRS Algorithms</h4>
+                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Thomas Cormen</p>
+                <span class="status-badge danger" style="font-size: 10px;">Reserved Queue</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Queue Management -->
+      <div class="showcase-panel" id="panel-queue">
+        <div style="display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 50px; align-items: center;">
+          <div>
+            <h3 style="font-size: 26px; margin-bottom: 16px;">Waitlists & Priority Reservation Queues</h3>
+            <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 15px;">When critical academic books are completely checked out, students can queue reservation requests. Once the book is checked back in, the system registers the return and manages queue priorities.</p>
+            <a href="login.html" class="btn btn-secondary">Try Pre-Book Flow</a>
+          </div>
+          <div class="mockup-screen">
+            <div class="mockup-header">
+              <div class="mockup-dot red"></div>
+              <div class="mockup-dot yellow"></div>
+              <div class="mockup-dot green"></div>
+              <span class="mockup-title">reservation_queues.xml</span>
+            </div>
+            <div class="mockup-body" style="background: white;">
+              <div style="border-radius: 12px; padding: 12px 18px; border: 1.5px dashed rgba(99,102,241,0.2); background: rgba(99,102,241,0.02); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <h5 style="margin: 0; font-size: 14px;">"Introduction to Algorithms"</h5>
+                  <p style="margin: 0; font-size: 11px; color: var(--text-muted);">Position: #1 in Waitlist</p>
+                </div>
+                <span class="status-badge warning" style="font-size: 11px;">Awaiting Return</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding: 60px 8% 40px 8%; text-align: center; border-top: 1px solid var(--glass-border); color: var(--text-muted); font-size: 14px;">
+    <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 24px;">
+      <a href="#" style="color: inherit; text-decoration: none;"><i class="fab fa-github"></i> GitHub Code</a>
+      <a href="#" style="color: inherit; text-decoration: none;"><i class="fas fa-book"></i> Documentation</a>
+      <a href="#" style="color: inherit; text-decoration: none;"><i class="fas fa-university"></i> College Portal</a>
+    </div>
+    <p>&copy; 2026 Smart Library Management System. Built for next-generation research libraries.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.27/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

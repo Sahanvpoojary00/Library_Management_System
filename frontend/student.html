@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - Smart Library System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar glass-panel">
+      <a href="index.html" class="sidebar-logo">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>Smart Library</span>
+      </a>
+      
+      <ul class="sidebar-menu">
+        <li>
+          <a class="menu-link active" data-section="student-overview-section">
+            <i class="fas fa-home"></i>
+            <span>Overview</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-link" data-section="student-catalog-section">
+            <i class="fas fa-search"></i>
+            <span>Browse Catalog</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-link" data-section="student-reservations-section">
+            <i class="fas fa-bookmark"></i>
+            <span>My Reservations</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-link" data-section="student-history-section">
+            <i class="fas fa-book-reader"></i>
+            <span>Borrow History</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button onclick="handleLogout()" class="btn btn-danger" style="width: 100%; border-radius: 12px; gap: 8px;">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+      
+      <!-- Top Profile & Header Bar -->
+      <div class="top-bar">
+        <div>
+          <h2 class="text-gradient">Student Portal</h2>
+          <p style="color: var(--text-muted); font-size: 14px;">Welcome back to your library workbench</p>
+        </div>
+        <div class="user-profile">
+          <div class="user-info" style="text-align: right;">
+            <h5 id="student-name" style="margin: 0;">Student</h5>
+            <span style="font-size: 12px; color: var(--primary); font-weight: 600;">Library Member</span>
+          </div>
+          <div class="user-avatar" id="student-avatar-char">S</div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <section class="stats-grid">
+        <div class="glass-card stat-card">
+          <div class="stat-info">
+            <h3 id="student-metric-active">0</h3>
+            <p>Active Loans</p>
+          </div>
+          <div class="stat-icon primary"><i class="fas fa-book-reader"></i></div>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-info">
+            <h3 id="student-metric-deadline">No Deadlines</h3>
+            <p>Next Return Deadline</p>
+          </div>
+          <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
+        </div>
+        <div class="glass-card stat-card">
+          <div class="stat-info">
+            <h3 id="student-metric-reserves">0</h3>
+            <p>My Reservations</p>
+          </div>
+          <div class="stat-icon accent"><i class="fas fa-bookmark"></i></div>
+        </div>
+      </section>
+
+      <!-- Dashboard Sections -->
+
+      <!-- 1. OVERVIEW SECTION -->
+      <div id="student-overview-section" class="dashboard-section active">
+        <div class="glass-card">
+          <h3 style="margin-bottom: 20px;"><i class="fas fa-book-open" style="color: var(--primary); margin-right: 8px;"></i> My Checked Out Books</h3>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Book Title & Author</th>
+                  <th>Issue Date</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="student-borrows-body">
+                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Fetching borrows...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. CATALOG SEARCH SECTION -->
+      <div id="student-catalog-section" class="dashboard-section">
+        <div class="glass-card" style="margin-bottom: 30px;">
+          <h3 style="margin-bottom: 16px;"><i class="fas fa-magnifying-glass" style="color: var(--primary); margin-right: 8px;"></i> Search Library Catalog</h3>
+          <div class="search-box">
+            <input type="text" id="catalog-search" class="form-control" placeholder="Search by book title, author, or category...">
+            <button class="btn btn-primary" onclick="loadCatalog(document.getElementById('catalog-search').value.trim())">
+              <i class="fas fa-search"></i> Search
+            </button>
+          </div>
+        </div>
+        
+        <div class="books-grid" id="catalog-grid">
+          <!-- Cards injected by student.js -->
+        </div>
+      </div>
+
+      <!-- 3. RESERVATIONS SECTION -->
+      <div id="student-reservations-section" class="dashboard-section">
+        <div class="glass-card">
+          <h3 style="margin-bottom: 20px;"><i class="fas fa-bookmark" style="color: var(--primary); margin-right: 8px;"></i> My Pending Book Reservations</h3>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Book Title & Author</th>
+                  <th>Reservation Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="student-reservations-body">
+                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Loading reservations...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. HISTORY SECTION -->
+      <div id="student-history-section" class="dashboard-section">
+        <div class="glass-card">
+          <h3 style="margin-bottom: 20px;"><i class="fas fa-history" style="color: var(--primary); margin-right: 8px;"></i> My Borrowing History Ledger</h3>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Book Title & Author</th>
+                  <th>Issue Date</th>
+                  <th>Due Date</th>
+                  <th>Return Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="student-history-body">
+                <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Loading borrow log...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/student.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
