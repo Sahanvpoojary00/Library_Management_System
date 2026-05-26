@@ -7,16 +7,21 @@ const dbConfig = {
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: true } : undefined
 };
 
 let pool;
 
 async function initDB() {
   try {
-    // 1. Connection without DB selected to ensure database exists
-    const tempConnection = await mysql.createConnection(dbConfig);
-    await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME || 'library_management_system'}\``);
-    await tempConnection.end();
+    // 1. Try to ensure database exists (will skip quietly if restricted like PlanetScale)
+    try {
+      const tempConnection = await mysql.createConnection(dbConfig);
+      await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME || 'library_management_system'}\``);
+      await tempConnection.end();
+    } catch (err) {
+      console.log('Database creation query skipped or unavailable (standard on PlanetScale/cloud branches):', err.message);
+    }
 
     // 2. Initialize connection pool with DB selected
     pool = mysql.createPool({
@@ -29,7 +34,7 @@ async function initDB() {
 
     console.log('Database pool initialized successfully.');
 
-    // 3. Create tables
+    // 3. Create tables (PlanetScale compatible: no foreign key constraints, using indexes instead)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id INT PRIMARY KEY AUTO_INCREMENT,
@@ -59,8 +64,8 @@ async function initDB() {
         issue_date DATE NOT NULL,
         due_date DATE NOT NULL,
         return_date DATE NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+        INDEX idx_trans_user (user_id),
+        INDEX idx_trans_book (book_id)
       )
     `);
 
@@ -70,8 +75,8 @@ async function initDB() {
         user_id INT NOT NULL,
         book_id INT NOT NULL,
         reservation_date DATE NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+        INDEX idx_res_user (user_id),
+        INDEX idx_res_book (book_id)
       )
     `);
 

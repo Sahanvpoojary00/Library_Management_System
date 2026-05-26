@@ -1,3 +1,4 @@
+// Base API URL. Uses Vercel proxy /api in production, or fallback to local port
 const API_BASE = '/api';
 
 // Save JWT and user info

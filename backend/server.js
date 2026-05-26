@@ -12,13 +12,14 @@ const reserveRoutes = require('./routes/reservations');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
+// Dynamic CORS configurations supporting Vercel domain list
+const corsOptions = {
+  origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : '*',
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve frontend static files
-app.use(express.static(path.join(__dirname, '../frontend')));
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -26,10 +27,23 @@ app.use('/api/books', bookRoutes);
 app.use('/api', transRoutes);
 app.use('/api', reserveRoutes);
 
-// Fallback to index.html for single-page style routing if accessed directly
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
-});
+// Conditional Static Files Serving (Local vs Production Health Check)
+if (process.env.NODE_ENV !== 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend')));
+  
+  app.get(/.*/, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  });
+} else {
+  // Service health check route for Render deploys
+  app.get('/', (req, res) => {
+    res.status(200).json({ 
+      status: 'healthy', 
+      message: 'Smart Library System Backend API is online.',
+      timestamp: new Date()
+    });
+  });
+}
 
 // Initialize DB and start server
 async function startServer() {
