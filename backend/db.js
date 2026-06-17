@@ -2,31 +2,34 @@ const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
+const DB_NAME = process.env.DB_NAME || 'library_management';
+
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 3306,
+  port: parseInt(process.env.DB_PORT) || 3306,
   user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: true } : undefined
+  password: process.env.DB_PASSWORD || ''
 };
 
 let pool;
 
 async function initDB() {
   try {
-    // 1. Try to ensure database exists (will skip quietly if restricted like PlanetScale)
+    // 1. Create database if it doesn't exist
     try {
       const tempConnection = await mysql.createConnection(dbConfig);
-      await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME || 'library_management_system'}\``);
+      await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\``);
       await tempConnection.end();
+      console.log(`Database "${DB_NAME}" ready.`);
     } catch (err) {
-      console.log('Database creation query skipped or unavailable (standard on PlanetScale/cloud branches):', err.message);
+      console.error('Could not create database. Is XAMPP MySQL running?', err.message);
+      throw err;
     }
 
-    // 2. Initialize connection pool with DB selected
+    // 2. Initialize connection pool
     pool = mysql.createPool({
       ...dbConfig,
-      database: process.env.DB_NAME || 'library_management_system',
+      database: DB_NAME,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0
@@ -34,7 +37,7 @@ async function initDB() {
 
     console.log('Database pool initialized successfully.');
 
-    // 3. Create tables (PlanetScale compatible: no foreign key constraints, using indexes instead)
+    // 3. Create tables
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id INT PRIMARY KEY AUTO_INCREMENT,
@@ -74,11 +77,96 @@ async function initDB() {
         id INT PRIMARY KEY AUTO_INCREMENT,
         user_id INT NOT NULL,
         book_id INT NOT NULL,
-        reservation_date DATE NOT NULL,
+        reservation_date DATETIME NOT NULL,
         INDEX idx_res_user (user_id),
         INDEX idx_res_book (book_id)
       )
     `);
+
+    // Ensure reservation_date is DATETIME in case table already existed with DATE type
+    try {
+      await pool.query('ALTER TABLE reservations MODIFY COLUMN reservation_date DATETIME NOT NULL');
+    } catch (err) {
+      console.log('Skipping column alteration or failed:', err.message);
+    }
+
+    // Ensure allow_download exists in ebooks and academic_resources
+    try {
+      await pool.query('ALTER TABLE ebooks ADD COLUMN allow_download TINYINT(1) NOT NULL DEFAULT 1');
+    } catch (err) {
+      // ignore
+    }
+    try {
+      await pool.query('ALTER TABLE academic_resources ADD COLUMN allow_download TINYINT(1) NOT NULL DEFAULT 1');
+    } catch (err) {
+      // ignore
+    }
+
+    // ── Smart Library & Academic Assistant Tables ─────────────────────────────
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS ebooks (
+        id             INT PRIMARY KEY AUTO_INCREMENT,
+        title          VARCHAR(255) NOT NULL,
+        subject        VARCHAR(150) NOT NULL,
+        file_path      VARCHAR(500) NOT NULL,
+        allow_download TINYINT(1) NOT NULL DEFAULT 1,
+        uploaded_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS academic_resources (
+        id             INT PRIMARY KEY AUTO_INCREMENT,
+        title          VARCHAR(255) NOT NULL,
+        subject        VARCHAR(150) NOT NULL,
+        file_path      VARCHAR(500) NOT NULL,
+        allow_download TINYINT(1) NOT NULL DEFAULT 1,
+        uploaded_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS ebook_chunks (
+        id         INT PRIMARY KEY AUTO_INCREMENT,
+        ebook_id   INT NOT NULL,
+        chunk_text MEDIUMTEXT NOT NULL,
+        chunk_index INT NOT NULL DEFAULT 0,
+        INDEX idx_chunk_ebook (ebook_id),
+        FULLTEXT INDEX ft_chunk_text (chunk_text)
+      )
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS generated_answers (
+        id             INT PRIMARY KEY AUTO_INCREMENT,
+        user_id        INT NOT NULL,
+        question       TEXT NOT NULL,
+        answer         LONGTEXT NOT NULL,
+        marks          INT NOT NULL,
+        source_book    VARCHAR(255),
+        source_chapter VARCHAR(255),
+        created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_ga_user (user_id)
+      )
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS academic_assistant_history (
+        id              INT PRIMARY KEY AUTO_INCREMENT,
+        user_id         INT NOT NULL,
+        question        TEXT NOT NULL,
+        answer          LONGTEXT NOT NULL,
+        marks_requested INT NOT NULL,
+        source_type     ENUM('PDF', 'GEMINI') NOT NULL,
+        source_pdf      VARCHAR(255) NULL,
+        created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_aah_user (user_id),
+        INDEX idx_aah_source_type (source_type)
+      )
+    `);
+
+    console.log('Smart Library & Academic Assistant tables ready.');
 
     // 4. Seed default admin and student if users table is empty
     const [users] = await pool.query('SELECT COUNT(*) as count FROM users');

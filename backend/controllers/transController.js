@@ -1,4 +1,5 @@
 const db = require('../db');
+const { checkAndCancelExpiredReservations } = require('./reserveController');
 
 exports.issueBook = async (req, res) => {
   try {
@@ -7,6 +8,9 @@ exports.issueBook = async (req, res) => {
     if (!studentEmail || !bookId) {
       return res.status(400).json({ error: 'studentEmail and bookId are required' });
     }
+
+    // Run expiration check before issuing
+    await checkAndCancelExpiredReservations();
 
     // 1. Find user by email
     const [users] = await db.query('SELECT id, role FROM users WHERE email = ?', [studentEmail]);
@@ -19,18 +23,7 @@ exports.issueBook = async (req, res) => {
       return res.status(400).json({ error: 'Cannot issue a book to an administrator' });
     }
 
-    // 2. Find book and check availability
-    const [books] = await db.query('SELECT available, quantity FROM books WHERE id = ?', [bookId]);
-    if (books.length === 0) {
-      return res.status(404).json({ error: 'Book not found' });
-    }
-
-    const book = books[0];
-    if (book.available <= 0) {
-      return res.status(400).json({ error: 'Book is currently out of stock (no available units)' });
-    }
-
-    // 3. Check if student already has this book checked out
+    // 2. Check if student already has this book checked out
     const [active] = await db.query(
       'SELECT id FROM transactions WHERE user_id = ? AND book_id = ? AND return_date IS NULL',
       [student.id, bookId]
@@ -39,7 +32,7 @@ exports.issueBook = async (req, res) => {
       return res.status(409).json({ error: 'This student has already borrowed this book and not returned it yet' });
     }
 
-    // 4. Calculate dates
+    // 3. Calculate dates
     const issueDate = new Date();
     const durationDays = parseInt(daysToReturn, 10) || 14;
     const dueDate = new Date();
@@ -49,13 +42,38 @@ exports.issueBook = async (req, res) => {
     const issueDateStr = issueDate.toISOString().slice(0, 10);
     const dueDateStr = dueDate.toISOString().slice(0, 10);
 
-    // 5. Update book availability and insert transaction (atomic transaction)
+    // 4. Update book availability and insert transaction (atomic transaction)
     const conn = await db.getPool().getConnection();
     try {
       await conn.beginTransaction();
 
-      // Decrement available units
-      await conn.query('UPDATE books SET available = available - 1 WHERE id = ?', [bookId]);
+      // Check if student has a valid reservation for this book
+      const [reserves] = await conn.query(
+        'SELECT id FROM reservations WHERE user_id = ? AND book_id = ?',
+        [student.id, bookId]
+      );
+      const hasReservation = reserves.length > 0;
+
+      // Lock book row
+      const [books] = await conn.query('SELECT available, quantity FROM books WHERE id = ? FOR UPDATE', [bookId]);
+      if (books.length === 0) {
+        await conn.rollback();
+        return res.status(404).json({ error: 'Book not found' });
+      }
+
+      const book = books[0];
+
+      // If student doesn't have reservation, check standard availability
+      if (!hasReservation && book.available <= 0) {
+        await conn.rollback();
+        return res.status(400).json({ error: 'Book is currently out of stock (no available units)' });
+      }
+
+      // Decrement available units ONLY if the student did not reserve the book
+      // (If they reserved it, the availability was already decremented during reservation)
+      if (!hasReservation) {
+        await conn.query('UPDATE books SET available = available - 1 WHERE id = ?', [bookId]);
+      }
 
       // Create transaction record
       const [transResult] = await conn.query(
@@ -64,7 +82,9 @@ exports.issueBook = async (req, res) => {
       );
 
       // Delete user's reservation for this book if one exists (since they have now borrowed it)
-      await conn.query('DELETE FROM reservations WHERE user_id = ? AND book_id = ?', [student.id, bookId]);
+      if (hasReservation) {
+        await conn.query('DELETE FROM reservations WHERE user_id = ? AND book_id = ?', [student.id, bookId]);
+      }
 
       await conn.commit();
 

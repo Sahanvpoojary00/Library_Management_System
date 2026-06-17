@@ -1,8 +1,8 @@
-# Smart Library Management System - Tech Stack Document
+# ScholarSync - Tech Stack Document
 
 # 1. Project Overview
 
-The Smart Library Management System is a full-stack web application developed for managing library operations in a professional and user-friendly manner.
+The ScholarSync system is a full-stack web application developed for managing library operations in a professional and user-friendly manner.
 
 The system includes:
 - Admin portal
@@ -153,7 +153,7 @@ Stores:
 
 # 11. Conclusion
 
-The selected technology stack provides a scalable and professional solution for building the Smart Library Management System.
+The selected technology stack provides a scalable and professional solution for building ScholarSync.
 
 The stack supports:
 - Responsive UI design

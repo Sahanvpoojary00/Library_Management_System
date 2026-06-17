@@ -1,43 +1,48 @@
-# Smart Library Management System 🎓📚
+# ScholarSync 🎓📚
 
-A modern, production-ready, full-stack **Smart Library Management System** designed for academic institutions. Built using a three-tier architecture with a Node.js/Express backend, MariaDB/MySQL database, and a premium glassmorphic frontend utilizing GSAP, AOS, and Lenis.
+A full-stack **ScholarSync** (Smart Library & Academic Assistant) built for academic institutions as a college project. Features a Node.js/Express backend, MySQL database via XAMPP, and a glassmorphic frontend with smooth animations.
 
 ---
 
-## 🌟 Key Features
+## ✨ Features
 
-### 👤 Role-Based Portals
-- **Librarian (Admin) Console**: Full CRUD operations for books inventory, checkout dispatcher, manual return processing, and real-time reservation queue monitoring.
-- **Student Hub**: Searchable book catalog with debounced filtering, return deadline tracking, active checkouts, and pre-booking/reservation waitlist requests.
+### 👤 Role-Based Access
+- **Admin (Librarian) Console** — Manage books inventory, issue/return books, monitor reservations, cancel any reservation.
+- **Student Hub** — Browse catalog, reserve books, track active checkouts, view borrow history.
 
-### ⚙️ Automation & Business Logic
-- **Auto-Database Schema Builder**: Automatic creation of schemas, indexes, and demo seeding on startup.
-- **Transaction Queue Management**: Automated waitlists when books go out of stock.
+### 📚 Book Reservation Policy
+- Students can reserve any **available** book (locks one unit for them).
+- Each reservation is active for **12 hours** — after which it auto-expires and releases the book.
+- Students can have a maximum of **3 active reservations** at a time.
+- Students can manually cancel a reservation early.
+- Admins can view and cancel any student's reservation.
 
-### 🎨 Visual & Motion Design
-- **Glassmorphic Aesthetic**: Modern SaaS design with blur filters, magnetic hovering, and Outfit typography.
-- **GSAP Logo Intro**: Timed logo dot sliding, scaling, and rotation transitions.
-- **Mouse Parallax Mockups**: Floating dashboard cards shifting at varying speed ratios.
-- **Lenis & AOS Scroll**: Smooth inertial scrolling paired with fade-in scroll reveals.
+### ⚙️ Automation
+- **Auto Database Setup** — All tables are auto-created on first run. No manual SQL required.
+- **Seeded Demo Data** — Default admin, student, and sample books are auto-seeded.
+- **Expiry Cleanup** — Background task checks and auto-cancels stale reservations every minute.
+
+### 🎨 UI/UX
+- Glassmorphic dark-mode design with GSAP animations, AOS scroll reveals, and Lenis smooth scroll.
+- Responsive layout with micro-interactions and hover effects.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | HTML5, CSS3, JavaScript (ES6+), GSAP, AOS, Lenis |
-| Backend | Node.js, Express.js, JWT, bcryptjs |
-| Database | MariaDB / MySQL / PlanetScale |
-| Deployment | Vercel (Frontend), Render (Backend), PlanetScale (DB) |
+| Layer      | Technology                                        |
+|------------|---------------------------------------------------|
+| Frontend   | HTML5, CSS3, JavaScript (ES6+), GSAP, AOS, Lenis  |
+| Backend    | Node.js, Express.js, JWT, bcryptjs                |
+| Database   | MySQL (via XAMPP)                                 |
 
 ---
 
-## 🚀 Local Development
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js v18+
-- XAMPP (or any MySQL/MariaDB server)
+- [Node.js v18+](https://nodejs.org/)
+- [XAMPP](https://www.apachefriends.org/) (for MySQL)
 
 ### Setup
 
@@ -49,151 +54,91 @@ cd Library_Management_System
 # 2. Install dependencies
 npm install
 
-# 3. Create environment file
+# 3. Configure environment
 cp .env.example .env
-# Edit .env with your local database credentials
+# .env is pre-configured for XAMPP defaults — no changes needed unless your setup differs
 
-# 4. Start MySQL via XAMPP Control Panel
+# 4. Start XAMPP and ensure MySQL is running
 
-# 5. Run the server
+# 5. Start the server
 npm start
-# or for development with auto-reload:
-npm run dev
 ```
 
 Open **http://localhost:3000** in your browser.
+
+> The database `library_management` and all tables are created automatically on first run.
 
 ---
 
 ## 🔑 Demo Credentials
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin (Librarian) | `admin@library.com` | `admin123` |
-| Student | `student@library.com` | `student123` |
+| Role    | Email                   | Password    |
+|---------|-------------------------|-------------|
+| Admin   | `admin@library.com`     | `admin123`  |
+| Student | `student@library.com`   | `student123`|
 
-You can also register new student accounts via the signup form.
+> You can also register new student accounts via the signup form.
 
 ---
 
-## ☁️ Production Deployment
-
-### Architecture
+## 📂 Project Structure
 
 ```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│   Vercel     │────▸│   Render     │────▸│ PlanetScale  │
-│  (Frontend)  │ API │  (Backend)   │ SSL │  (MySQL DB)  │
-│  Static HTML │     │  Express.js  │     │  Serverless  │
-└──────────────┘     └──────────────┘     └──────────────┘
-```
-
----
-
-### Step 1: PlanetScale Database
-
-1. Create an account at [planetscale.com](https://planetscale.com)
-2. Create a new database named `library_management_system`
-3. Go to **Connect** → select **Node.js** driver
-4. Copy the connection credentials (`host`, `username`, `password`)
-5. The backend auto-creates all tables on first connection
-
----
-
-### Step 2: Render Backend
-
-1. Go to [render.com](https://render.com) → **New Web Service**
-2. Connect your GitHub repository
-3. Configure:
-   - **Build Command**: `npm install`
-   - **Start Command**: `node backend/server.js`
-4. Add environment variables:
-
-| Key | Value |
-|-----|-------|
-| `PORT` | `10000` |
-| `NODE_ENV` | `production` |
-| `DB_HOST` | *(from PlanetScale)* |
-| `DB_USER` | *(from PlanetScale)* |
-| `DB_PASSWORD` | *(from PlanetScale)* |
-| `DB_NAME` | `library_management_system` |
-| `DB_SSL` | `true` |
-| `JWT_SECRET` | *(strong random string)* |
-| `FRONTEND_URL` | `https://your-app.vercel.app` |
-
-5. Deploy and note your Render URL (e.g. `https://library-management-system-backend.onrender.com`)
-
----
-
-### Step 3: Vercel Frontend
-
-1. Go to [vercel.com](https://vercel.com) → **Import Project**
-2. Connect your GitHub repository
-3. **Important**: Update `vercel.json` — replace the Render URL in the API rewrite rule with your actual Render deployment URL:
-
-```json
-{
-  "source": "/api/:path*",
-  "destination": "https://YOUR-RENDER-URL.onrender.com/api/:path*"
-}
-```
-
-4. Deploy — Vercel auto-detects `vercel.json`
-5. Copy your Vercel URL and update the `FRONTEND_URL` variable on Render
-
----
-
-### Step 4: Final Verification
-
-After both services are deployed:
-1. Update `FRONTEND_URL` on Render with your Vercel URL
-2. Update the API proxy URL in `vercel.json` with your Render URL
-3. Redeploy both if needed
-4. Test: Landing page → Login → Admin Dashboard → Student Dashboard
-
----
-
-## 📂 Project Architecture
-
-```
+Library_Management_System/
 ├── backend/
-│   ├── controllers/       # Auth, Books, Transactions, Reservations
-│   ├── middleware/         # JWT auth & role validation
-│   ├── routes/            # REST API endpoint mapping
-│   ├── db.js              # Connection pool, SSL, schema seeding
-│   └── server.js          # Express server, CORS, health check
+│   ├── controllers/
+│   │   ├── authController.js       # Register & login
+│   │   ├── bookController.js       # Catalog management
+│   │   ├── transController.js      # Issue & return books
+│   │   └── reserveController.js    # Reservations + expiry logic
+│   ├── middleware/
+│   │   └── auth.js                 # JWT auth & role guards
+│   ├── routes/                     # REST API route definitions
+│   ├── db.js                       # MySQL pool + auto-schema setup
+│   └── server.js                   # Express server + background tasks
 ├── frontend/
-│   ├── css/style.css      # Glassmorphic UI design system
+│   ├── css/style.css               # Glassmorphic UI design system
 │   ├── js/
-│   │   ├── api.js         # Central API fetch client
-│   │   ├── auth.js        # Auth flows & route guards
-│   │   ├── admin.js       # Admin dashboard logic
-│   │   ├── student.js     # Student catalog & reservations
-│   │   └── main.js        # GSAP, AOS, Lenis animations
-│   ├── index.html         # Landing page
-│   ├── login.html         # Authentication forms
-│   ├── admin.html         # Admin console
-│   └── student.html       # Student hub
-├── vercel.json            # Vercel routing & API proxy config
-├── render.yaml            # Render deployment blueprint
-├── schema.sql             # Database schema reference
-├── .env.example           # Environment variable template
-└── package.json           # Dependencies & scripts
+│   │   ├── api.js                  # Centralised API fetch client
+│   │   ├── auth.js                 # Auth flows & route guards
+│   │   ├── admin.js                # Admin dashboard logic
+│   │   ├── student.js              # Student catalog & reservations
+│   │   └── main.js                 # GSAP / AOS / Lenis animations
+│   ├── index.html                  # Landing page
+│   ├── login.html                  # Login / signup
+│   ├── admin.html                  # Admin console
+│   └── student.html                # Student hub
+├── schema.sql                      # Database schema reference
+├── .env.example                    # Environment variable template
+├── .gitignore
+└── package.json
 ```
 
 ---
 
-## 📋 Environment Variables Reference
+## ⚙️ Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `PORT` | Yes | Server port (default: 3000) |
-| `NODE_ENV` | No | `development` or `production` |
-| `DB_HOST` | Yes | Database hostname |
-| `DB_PORT` | No | Database port (default: 3306) |
-| `DB_USER` | Yes | Database username |
-| `DB_PASSWORD` | Yes | Database password |
-| `DB_NAME` | Yes | Database name |
-| `DB_SSL` | No | Set to `true` for PlanetScale |
-| `JWT_SECRET` | Yes | Secret key for JWT tokens |
-| `FRONTEND_URL` | No | Comma-separated allowed CORS origins |
+Copy `.env.example` to `.env`. Default values work out-of-the-box with XAMPP.
+
+| Variable      | Default                 | Description                       |
+|---------------|-------------------------|-----------------------------------|
+| `PORT`        | `3000`                  | Port the server listens on        |
+| `DB_HOST`     | `localhost`             | MySQL host                        |
+| `DB_PORT`     | `3306`                  | MySQL port                        |
+| `DB_USER`     | `root`                  | MySQL username                    |
+| `DB_PASSWORD` | *(empty)*               | MySQL password (empty for XAMPP)  |
+| `DB_NAME`     | `library_management`    | Database name (auto-created)      |
+| `JWT_SECRET`  | *(see .env.example)*    | Secret key for JWT tokens         |
+
+---
+
+## 🗄️ Database Schema
+
+| Table          | Description                                      |
+|----------------|--------------------------------------------------|
+| `users`        | Admin and student accounts                       |
+| `books`        | Book inventory with quantity and availability    |
+| `transactions` | Borrow and return records                        |
+| `reservations` | Active 12-hour book reservation locks            |
+
+See [`schema.sql`](./schema.sql) for the full schema reference.

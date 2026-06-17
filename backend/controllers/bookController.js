@@ -1,13 +1,22 @@
 const db = require('../db');
+const { checkAndCancelExpiredReservations } = require('./reserveController');
 
 exports.getAllBooks = async (req, res) => {
   try {
+    // Run expiration check to keep counts accurate
+    await checkAndCancelExpiredReservations();
+
     const { search } = req.query;
-    let query = 'SELECT * FROM books';
+    let query = `
+      SELECT b.*, 
+             (SELECT COUNT(*) FROM reservations r WHERE r.book_id = b.id) as reserved_count,
+             (SELECT COUNT(*) FROM transactions t WHERE t.book_id = b.id AND t.return_date IS NULL) as borrowed_count
+      FROM books b
+    `;
     let params = [];
 
     if (search) {
-      query += ' WHERE title LIKE ? OR author LIKE ? OR category LIKE ?';
+      query += ' WHERE b.title LIKE ? OR b.author LIKE ? OR b.category LIKE ?';
       const searchWildcard = `%${search}%`;
       params = [searchWildcard, searchWildcard, searchWildcard];
     }

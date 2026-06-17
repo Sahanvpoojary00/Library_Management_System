@@ -1,16 +1,16 @@
 # Product Requirements Document (PRD)
-# Smart Library Management System
+# ScholarSync
 
 ## 1. Project Overview
 
 ### Project Name
-Smart Library Management System
+ScholarSync
 
 ### Project Type
 Full-Stack Web Application
 
 ### Purpose
-The Smart Library Management System is a digital platform designed to automate and simplify library operations for students and librarians. The system enables users to search, borrow, reserve, and return books efficiently while allowing administrators to manage inventory, users, and transactions through a centralized dashboard.
+ScholarSync is a digital platform designed to automate and simplify library operations for students and librarians. The system enables users to search, borrow, reserve, and return books efficiently while allowing administrators to manage inventory, users, and transactions through a centralized dashboard.
 
 The platform aims to reduce manual work, improve book tracking, provide analytics, and enhance the overall library experience using modern web technologies.
 
@@ -442,7 +442,7 @@ GET /api/history
 
 # 16. Expected Outcomes
 
-The Smart Library Management System is expected to:
+ScholarSync is expected to:
 - Improve efficiency of library operations
 - Reduce paperwork and manual tracking
 - Provide faster access to resources
@@ -454,7 +454,7 @@ The Smart Library Management System is expected to:
 
 # 17. Conclusion
 
-The Smart Library Management System is a scalable full-stack solution designed to modernize traditional library workflows. By combining secure authentication, efficient database management, responsive user interfaces, and smart automation features, the system provides a reliable and future-ready platform for educational institutions.
+ScholarSync is a scalable full-stack solution designed to modernize traditional library workflows. By combining secure authentication, efficient database management, responsive user interfaces, and smart automation features, the system provides a reliable and future-ready platform for educational institutions.
 
 The project also serves as a strong portfolio application demonstrating full-stack development, database design, API development, authentication, analytics, and scalable software architecture.
 

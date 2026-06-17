@@ -1,4 +1,4 @@
-# Smart Library Management System
+# ScholarSync
 # Software Design Document (SDD)
 
 ---
@@ -6,7 +6,7 @@
 # 1. Introduction
 
 ## 1.1 Purpose
-This Software Design Document describes the architecture, components, database structure, workflows, and technical implementation details of the Smart Library Management System.
+This Software Design Document describes the architecture, components, database structure, workflows, and technical implementation details of ScholarSync.
 
 The document serves as a technical blueprint for development and implementation.
 
@@ -14,7 +14,7 @@ The document serves as a technical blueprint for development and implementation.
 
 # 1.2 Project Overview
 
-The Smart Library Management System is a web-based application developed to simplify and digitize library operations.
+ScholarSync is a web-based application developed to simplify and digitize library operations.
 
 The system provides:
 - Admin login and management features
@@ -615,7 +615,7 @@ Potential future improvements:
 
 # 14. Conclusion
 
-The Smart Library Management System is designed as a scalable and efficient web application for modern library management. The system simplifies library operations through role-based access, centralized data management, and automated workflows.
+ScholarSync is designed as a scalable and efficient web application for modern library management. The system simplifies library operations through role-based access, centralized data management, and automated workflows.
 
 The project demonstrates full-stack development concepts including frontend design, backend API development, authentication, database integration, and modular software architecture.
 

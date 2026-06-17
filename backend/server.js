@@ -8,51 +8,52 @@ const authRoutes = require('./routes/auth');
 const bookRoutes = require('./routes/books');
 const transRoutes = require('./routes/transactions');
 const reserveRoutes = require('./routes/reservations');
+const ebookRoutes = require('./routes/ebooks');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Dynamic CORS configurations supporting Vercel domain list
-const corsOptions = {
-  origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : '*',
-  credentials: true
-};
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve uploaded ebooks (PDF files) — must come before API routes
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api', transRoutes);
 app.use('/api', reserveRoutes);
+app.use('/api/ebooks', ebookRoutes);
 
-// Conditional Static Files Serving (Local vs Production Health Check)
-if (process.env.NODE_ENV !== 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend')));
-  
-  app.get(/.*/, (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/index.html'));
-  });
-} else {
-  // Service health check route for Render deploys
-  app.get('/', (req, res) => {
-    res.status(200).json({ 
-      status: 'healthy', 
-      message: 'Smart Library System Backend API is online.',
-      timestamp: new Date()
-    });
-  });
-}
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
 
 // Initialize DB and start server
 async function startServer() {
   try {
     await db.initDB();
+
+    // Start periodic background cleanup of expired reservations (every 1 minute)
+    const { checkAndCancelExpiredReservations } = require('./controllers/reserveController');
+    setInterval(async () => {
+      try {
+        await checkAndCancelExpiredReservations();
+      } catch (err) {
+        console.error('Error running periodic reservation cleanup:', err);
+      }
+    }, 60000);
+
     app.listen(PORT, () => {
       console.log(`==================================================`);
-      console.log(`Smart Library Management System Server running!`);
+      console.log(`ScholarSync - Smart Library & Academic Assistant Server running!`);
       console.log(`Local Access: http://localhost:${PORT}`);
+      console.log(`Gemini Model Configured: ${process.env.GEMINI_MODEL || 'gemini-2.5-flash'}`);
       console.log(`==================================================`);
     });
   } catch (error) {

@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Dashboard - Smart Library System</title>
+  <title>Student Dashboard - ScholarSync</title>
+  <meta name="description" content="ScholarSync Student Portal — Browse books, manage reservations, and use the Smart Library & Academic Assistant for exam preparation.">
+  <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+  <link rel="shortcut icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -15,7 +19,7 @@
     <aside class="sidebar glass-panel">
       <a href="index.html" class="sidebar-logo">
         <i class="fa-solid fa-graduation-cap"></i>
-        <span>Smart Library</span>
+        <span>ScholarSync</span>
       </a>
       
       <ul class="sidebar-menu">
@@ -41,6 +45,19 @@
           <a class="menu-link" data-section="student-history-section">
             <i class="fas fa-book-reader"></i>
             <span>Borrow History</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-link" data-section="student-resources-section" id="resources-menu-link">
+            <i class="fas fa-book-open"></i>
+            <span>Academic Resources</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-link" data-section="student-ai-section" id="ai-menu-link">
+            <i class="fas fa-graduation-cap"></i>
+            <span>AI Assistant</span>
+            <span class="ai-badge">AI</span>
           </a>
         </li>
       </ul>
@@ -100,7 +117,7 @@
 
       <!-- 1. OVERVIEW SECTION -->
       <div id="student-overview-section" class="dashboard-section active">
-        <div class="glass-card">
+        <div class="glass-card" style="margin-bottom: 24px;">
           <h3 style="margin-bottom: 20px;"><i class="fas fa-book-open" style="color: var(--primary); margin-right: 8px;"></i> My Checked Out Books</h3>
           <div class="table-container">
             <table class="custom-table">
@@ -116,6 +133,17 @@
                 <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Fetching borrows...</td></tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Recent Academic Queries Widget -->
+        <div class="glass-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="margin: 0;"><i class="fas fa-robot" style="color: var(--primary); margin-right: 8px;"></i> Recent Academic Queries</h3>
+            <button class="btn btn-secondary" onclick="document.getElementById('ai-menu-link').click()" style="padding: 6px 12px; font-size: 13px;">View Full History</button>
+          </div>
+          <div id="overview-recent-queries">
+            <div style="text-align: center; padding: 20px; color: var(--text-muted);">Loading recent queries...</div>
           </div>
         </div>
       </div>
@@ -159,7 +187,7 @@
         </div>
       </div>
 
-      <!-- 4. HISTORY SECTION -->
+      <!-- 4. BORROW HISTORY SECTION -->
       <div id="student-history-section" class="dashboard-section">
         <div class="glass-card">
           <h3 style="margin-bottom: 20px;"><i class="fas fa-history" style="color: var(--primary); margin-right: 8px;"></i> My Borrowing History Ledger</h3>
@@ -182,8 +210,337 @@
         </div>
       </div>
 
-    </main>
+      <!-- 5. ACADEMIC RESOURCES SECTION -->
+      <div id="student-resources-section" class="dashboard-section">
+        <!-- Header -->
+        <div class="glass-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.06)); border: 1px solid rgba(99,102,241,0.15);">
+          <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; flex-shrink: 0;">
+              <i class="fas fa-book-open"></i>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <h3 style="margin: 0; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Academic Resource Library</h3>
+              <p style="margin: 4px 0 0; font-size: 13px; color: var(--text-muted);">Browse and read the university's prescribed e-books and textbooks online</p>
+            </div>
+            <div style="flex-shrink: 0; display: flex; gap: 10px; align-items: center;">
+              <div class="search-box" style="margin: 0; min-width: 260px;">
+                <input type="text" id="resources-search" class="form-control" placeholder="Search by title or subject..." style="height: 38px; font-size: 13px;">
+                <button class="btn btn-primary" onclick="filterResources()" style="padding: 8px 14px;"><i class="fas fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
 
+        <!-- Resources Grid -->
+        <div id="resources-grid" class="resource-cards-grid">
+          <div style="text-align: center; padding: 50px; color: var(--text-muted); grid-column: 1/-1;">
+            <i class="fas fa-book-open" style="font-size: 2.5rem; margin-bottom: 14px; display: block; opacity: 0.3;"></i>
+            <p>Loading academic resources...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. AI ANSWER HISTORY SECTION -->
+      <div id="student-ai-section" class="dashboard-section">
+        <!-- Dashboard Header -->
+        <div class="glass-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.06)); border: 1px solid rgba(99,102,241,0.15);">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; flex-shrink: 0;">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div style="flex: 1;">
+              <h3 style="margin: 0; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Smart Library & Academic Assistant</h3>
+              <p style="margin: 4px 0 0; font-size: 13px; color: var(--text-muted);">Get textbook-grounded, exam-formatted answers using the library's prescribed e-books</p>
+            </div>
+            <button class="btn btn-primary" id="open-ai-widget-btn" style="flex-shrink: 0;">
+              <i class="fas fa-comment-dots"></i> Open Assistant
+            </button>
+          </div>
+        </div>
+
+        <!-- Academic Assistant Analytics Section -->
+        <h3 style="margin: 24px 0 16px;"><i class="fas fa-chart-line" style="color: var(--primary); margin-right: 8px;"></i> Assistant Analytics</h3>
+        <section class="stats-grid" style="margin-bottom: 28px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+          <div class="glass-card stat-card" style="padding: 16px;">
+            <div class="stat-info">
+              <h3 id="stat-total-q">0</h3>
+              <p>Total Questions</p>
+            </div>
+            <div class="stat-icon primary"><i class="fas fa-question"></i></div>
+          </div>
+          <div class="glass-card stat-card" style="padding: 16px;">
+            <div class="stat-info">
+              <h3 id="stat-week-q">0</h3>
+              <p>Asked This Week</p>
+            </div>
+            <div class="stat-icon warning"><i class="fas fa-calendar-week"></i></div>
+          </div>
+          <div class="glass-card stat-card" style="padding: 16px;">
+            <div class="stat-info">
+              <h3 id="stat-avg-q" style="font-size: 20px;">0.0</h3>
+              <p>Avg Qs / Day</p>
+            </div>
+            <div class="stat-icon accent"><i class="fas fa-calculator"></i></div>
+          </div>
+          <div class="glass-card stat-card" style="padding: 16px;">
+            <div class="stat-info">
+              <h5 id="stat-most-pdf" style="font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;">None</h5>
+              <p>Top Textbook</p>
+            </div>
+            <div class="stat-icon success" style="background: rgba(16, 185, 129, 0.15); color: #10b981;"><i class="fas fa-file-pdf"></i></div>
+          </div>
+          <div class="glass-card stat-card" style="padding: 16px;">
+            <div class="stat-info">
+              <h5 id="stat-most-subject" style="font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;">None</h5>
+              <p>Top Subject</p>
+            </div>
+            <div class="stat-icon accent" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;"><i class="fas fa-book-open"></i></div>
+          </div>
+          <div class="glass-card stat-card" style="padding: 16px;">
+            <div class="stat-info">
+              <h5 id="stat-last-q" style="font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;">None</h5>
+              <p>Last Query</p>
+            </div>
+            <div class="stat-icon primary" style="background: rgba(99, 102, 241, 0.15); color: #6366f1;"><i class="fas fa-comment-dots"></i></div>
+          </div>
+        </section>
+
+        <!-- History Search & Filters Dashboard Card -->
+        <div class="glass-card" style="margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <h3 style="margin: 0;"><i class="fas fa-history" style="color: var(--primary); margin-right: 8px;"></i> Assistant History</h3>
+            <button class="btn btn-danger" onclick="clearCompanionHistory()" style="padding: 6px 14px; font-size: 13px;">
+              <i class="fas fa-trash-alt"></i> Clear All History
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px;">
+            <!-- Search bar -->
+            <div>
+              <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Search Query / Book</label>
+              <input type="text" id="ai-history-search" class="form-control" placeholder="Search answers/books..." style="height: 38px; font-size: 13px;">
+            </div>
+            <!-- Source Filter -->
+            <div>
+              <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Source Type</label>
+              <select id="ai-history-filter-source" class="form-control" style="height: 38px; font-size: 13px; padding: 4px 8px;">
+                <option value="">All Sources</option>
+                <option value="PDF">PDF Textbook</option>
+                <option value="GEMINI">Gemini AI</option>
+              </select>
+            </div>
+            <!-- PDF Filter -->
+            <div>
+              <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Specific Textbook</label>
+              <select id="ai-history-filter-pdf" class="form-control" style="height: 38px; font-size: 13px; padding: 4px 8px;">
+                <option value="">All Textbooks</option>
+              </select>
+            </div>
+            <!-- Date Filter -->
+            <div>
+              <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Date Asked</label>
+              <select id="ai-history-filter-date" class="form-control" style="height: 38px; font-size: 13px; padding: 4px 8px;">
+                <option value="">All Time</option>
+                <option value="today">Today</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div id="ai-history-list">
+            <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <i class="fas fa-robot" style="font-size: 2rem; margin-bottom: 12px; display: block; opacity: 0.4;"></i>
+              <p>No answers generated yet. Use the AI Assistant to ask your first question!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       ACADEMIC RESOURCES PDF VIEWER MODAL
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="pdf-viewer-modal" style="z-index: 10000;" onclick="closePdfViewer(event)">
+    <div class="glass-panel" style="width: 92%; max-width: 1100px; height: 88vh; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
+      <div class="modal-header" style="padding: 16px 24px; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <i class="fas fa-file-pdf" style="color: var(--primary); font-size: 20px;"></i>
+          <div>
+            <h4 id="pdf-viewer-title" style="margin: 0; font-size: 16px;">PDF Viewer</h4>
+            <p id="pdf-viewer-subject" style="margin: 0; font-size: 12px; color: var(--text-muted);"></p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <a id="pdf-download-link" href="#" download class="btn btn-secondary" style="font-size: 12px; padding: 6px 14px;"><i class="fas fa-download"></i> Download</a>
+          <button onclick="closePdfViewer()" class="btn btn-danger" style="font-size: 12px; padding: 6px 12px;"><i class="fas fa-times"></i></button>
+        </div>
+      </div>
+      <iframe id="pdf-viewer-frame" src="" style="flex: 1; border: none; background: #f1f5f9;" title="PDF Viewer"></iframe>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SMART ACADEMIC ASSISTANT — FLOATING WIDGET
+  ═══════════════════════════════════════════════════════════════════════ -->
+
+  <!-- Floating Toggle Button -->
+  <button class="ai-fab" id="ai-fab" title="Smart Library & Academic Assistant" aria-label="Open AI Academic Assistant">
+    <div class="ai-fab-inner">
+      <i class="fas fa-graduation-cap ai-fab-icon"></i>
+      <span class="ai-fab-pulse"></span>
+    </div>
+    <span class="ai-fab-tooltip">Smart Library & Academic Assistant</span>
+  </button>
+
+  <!-- Widget Panel -->
+  <div class="ai-widget" id="ai-widget" aria-hidden="true">
+    <!-- Header -->
+    <div class="ai-widget-header">
+      <div class="ai-widget-brand">
+        <div class="ai-widget-icon">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div>
+          <h4 class="ai-widget-title">Smart Library & Academic Assistant</h4>
+          <p class="ai-widget-subtitle">Textbook-powered exam prep</p>
+        </div>
+      </div>
+      <div class="ai-widget-header-actions">
+        <button class="ai-icon-btn" id="ai-history-toggle-btn" title="Answer History">
+          <i class="fas fa-history"></i>
+        </button>
+        <button class="ai-icon-btn" id="ai-close-btn" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body: Two Views (Ask / History) -->
+    <div class="ai-widget-body">
+
+      <!-- ── Ask View ── -->
+      <div class="ai-view" id="ai-ask-view">
+        <div class="ai-form-group">
+          <label class="ai-label"><i class="fas fa-question-circle"></i> Your Question</label>
+          <textarea id="ai-question-input" class="ai-textarea" placeholder="e.g. Explain the OSI model and its layers..." rows="4"></textarea>
+        </div>
+
+        <div class="ai-form-group">
+          <label class="ai-label"><i class="fas fa-book"></i> Reference PDF <span style="font-size: 11px; color: var(--text-muted); font-weight: 400;">(Optional — leave blank for Gemini AI)</span></label>
+          <!-- Searchable PDF Selector -->
+          <div class="ai-pdf-selector" id="ai-pdf-selector-wrap">
+            <div class="ai-pdf-search-box">
+              <i class="fas fa-search ai-pdf-search-icon"></i>
+              <input type="text" id="ai-pdf-search-input" class="ai-pdf-search-input" placeholder="Search academic resources..." autocomplete="off">
+              <button id="ai-pdf-clear-btn" class="ai-pdf-clear-btn" title="Clear selection" style="display:none;">
+                <i class="fas fa-times-circle"></i>
+              </button>
+            </div>
+            <div class="ai-pdf-dropdown" id="ai-pdf-dropdown" style="display:none;">
+              <div class="ai-pdf-option ai-pdf-none-option" data-id="" data-title="Gemini General Knowledge">
+                <i class="fas fa-brain"></i>
+                <div>
+                  <strong>No PDF — Use Gemini AI</strong>
+                  <small>General academic knowledge</small>
+                </div>
+              </div>
+              <div id="ai-pdf-list">
+                <div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 13px;">Loading resources...</div>
+              </div>
+            </div>
+            <div id="ai-selected-pdf-badge" class="ai-selected-pdf-badge" style="display:none;">
+              <i class="fas fa-file-pdf"></i>
+              <span id="ai-selected-pdf-name">No PDF Selected</span>
+            </div>
+          </div>
+          <input type="hidden" id="ai-selected-ebook-id" value="">
+        </div>
+
+        <div class="ai-form-group">
+          <label class="ai-label"><i class="fas fa-star"></i> Marks Required</label>
+          <div class="ai-marks-grid">
+            <label class="ai-marks-option">
+              <input type="radio" name="ai-marks" value="2" id="marks-2">
+              <span class="ai-marks-chip">2 Marks</span>
+            </label>
+            <label class="ai-marks-option">
+              <input type="radio" name="ai-marks" value="5" id="marks-5">
+              <span class="ai-marks-chip">5 Marks</span>
+            </label>
+            <label class="ai-marks-option">
+              <input type="radio" name="ai-marks" value="10" id="marks-10" checked>
+              <span class="ai-marks-chip">10 Marks</span>
+            </label>
+            <label class="ai-marks-option">
+              <input type="radio" name="ai-marks" value="15" id="marks-15">
+              <span class="ai-marks-chip">15 Marks</span>
+            </label>
+          </div>
+        </div>
+
+        <button class="ai-generate-btn" id="ai-generate-btn">
+          <i class="fas fa-wand-magic-sparkles"></i>
+          <span id="ai-generate-btn-text">Generate Answer</span>
+        </button>
+
+        <!-- Loading State -->
+        <div class="ai-loading" id="ai-loading" style="display:none;">
+          <div class="ai-loading-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <p class="ai-loading-text">Searching textbooks and generating your answer...</p>
+        </div>
+
+        <!-- Answer Output -->
+        <div class="ai-answer-box" id="ai-answer-box" style="display:none;">
+          <div class="ai-answer-header">
+            <i class="fas fa-file-alt"></i>
+            <span>Generated Answer</span>
+            <button class="ai-copy-btn" id="ai-copy-btn" title="Copy answer">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+          <div class="ai-answer-content" id="ai-answer-content"></div>
+
+          <!-- Source Citation -->
+          <div class="ai-source-card" id="ai-source-card">
+            <div class="ai-source-header">
+              <i class="fas fa-book"></i> Source Reference
+            </div>
+            <div class="ai-source-grid">
+              <div class="ai-source-item">
+                <span class="ai-source-label">Book</span>
+                <span class="ai-source-value" id="ai-source-book">—</span>
+              </div>
+              <div class="ai-source-item">
+                <span class="ai-source-label">Subject</span>
+                <span class="ai-source-value" id="ai-source-subject">—</span>
+              </div>
+              <div class="ai-source-item">
+                <span class="ai-source-label">Chapter</span>
+                <span class="ai-source-value" id="ai-source-chapter">—</span>
+              </div>
+              <div class="ai-source-item">
+                <span class="ai-source-label">Pages</span>
+                <span class="ai-source-value" id="ai-source-pages">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── History View ── -->
+      <div class="ai-view" id="ai-history-view" style="display:none;">
+        <div class="ai-history-header">
+          <i class="fas fa-history"></i> Past Answers
+        </div>
+        <div id="ai-history-items"></div>
+      </div>
+
+    </div>
   </div>
 
   <!-- Scripts -->
@@ -191,6 +548,8 @@
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/student.js"></script>
+  <script src="js/assistant.js"></script>
   <script src="js/main.js"></script>
+  <link rel="stylesheet" href="css/assistant.css">
 </body>
 </html>

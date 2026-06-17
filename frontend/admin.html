@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - Smart Library System</title>
+  <title>Admin Dashboard - ScholarSync</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
+  <link rel="shortcut icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -15,7 +18,7 @@
     <aside class="sidebar glass-panel">
       <a href="index.html" class="sidebar-logo">
         <i class="fa-solid fa-graduation-cap"></i>
-        <span>Smart Library</span>
+        <span>ScholarSync</span>
       </a>
       
       <ul class="sidebar-menu">
@@ -47,6 +50,13 @@
           <a class="menu-link" data-section="history-section">
             <i class="fas fa-history"></i>
             <span>Transaction Logs</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-link" data-section="ebooks-section" id="ebooks-menu-link">
+            <i class="fas fa-brain"></i>
+            <span>Academic Resources</span>
+            <span class="ai-badge">AI</span>
           </a>
         </li>
       </ul>
@@ -262,6 +272,113 @@
         </div>
       </div>
 
+      <!-- 6. ACADEMIC RESOURCES SECTION -->
+      <div id="ebooks-section" class="dashboard-section">
+
+        <!-- Upload Card -->
+        <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 30px; align-items: start; margin-bottom: 30px;">
+          <div class="glass-card">
+            <h3 style="margin-bottom: 6px;">
+              <i class="fas fa-cloud-upload-alt" style="color: var(--primary); margin-right: 8px;"></i>
+              Upload Academic Resource
+            </h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Upload PDF textbooks for the AI Assistant to use when answering student questions.</p>
+            <form id="ebook-upload-form">
+              <div class="form-group">
+                <label class="form-label">Book / Resource Title</label>
+                <input type="text" id="ebook-title" class="form-control" placeholder="e.g. Computer Networks (5th Ed.)" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Subject / Category</label>
+                <input type="text" id="ebook-subject" class="form-control" placeholder="e.g. Computer Science" required>
+              </div>
+              <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                <input type="checkbox" id="ebook-allow-download" checked style="width: 18px; height: 18px; cursor: pointer;">
+                <label for="ebook-allow-download" style="font-size: 13px; color: var(--text-color); cursor: pointer; user-select: none; margin: 0;">Allow students to download this PDF</label>
+              </div>
+              <div class="form-group" style="margin-bottom: 24px;">
+                <label class="form-label">PDF File</label>
+                <div class="pdf-drop-zone" id="pdf-drop-zone" onclick="document.getElementById('ebook-pdf-input').click()">
+                  <i class="fas fa-file-pdf" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px; display: block;"></i>
+                  <p style="margin: 0; font-weight: 600;">Click to select PDF</p>
+                  <p style="margin: 4px 0 0; font-size: 12px; color: var(--text-muted);">Max 50 MB — Text-based PDFs only</p>
+                  <p id="pdf-file-name" style="margin: 8px 0 0; font-size: 13px; color: var(--primary); font-weight: 600;"></p>
+                </div>
+                <input type="file" id="ebook-pdf-input" accept=".pdf" style="display:none;">
+              </div>
+              <!-- Upload progress bar -->
+              <div id="upload-progress-wrap" style="display:none; margin-bottom:16px;">
+                <div style="background: var(--glass-border); border-radius: 8px; overflow: hidden; height: 8px;">
+                  <div id="upload-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 8px; transition: width 0.3s ease;"></div>
+                </div>
+                <p id="upload-progress-text" style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">Uploading and processing...</p>
+              </div>
+              <button type="submit" class="btn btn-primary" id="upload-btn" style="width: 100%;">
+                <i class="fas fa-upload"></i> Upload & Process PDF
+              </button>
+            </form>
+          </div>
+
+          <!-- Stat card for AI context -->
+          <div class="glass-card" style="background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08)); border: 1px solid rgba(99,102,241,0.2);">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+              <div style="width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; flex-shrink: 0;">
+                <i class="fas fa-graduation-cap"></i>
+              </div>
+              <div>
+                <h3 style="margin: 0; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Smart Library & Academic Assistant</h3>
+                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">AI-Powered Textbook Q&A Engine</p>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+              <div style="background: rgba(99,102,241,0.08); border-radius: 12px; padding: 14px; text-align: center;">
+                <h3 id="metric-ebooks" style="margin: 0; font-size: 2rem; color: var(--primary);">0</h3>
+                <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Textbooks Loaded</p>
+              </div>
+              <div style="background: rgba(139,92,246,0.08); border-radius: 12px; padding: 14px; text-align: center;">
+                <h3 id="metric-chunks" style="margin: 0; font-size: 2rem; color: var(--accent);">0</h3>
+                <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Knowledge Chunks</p>
+              </div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.7;">
+              <p style="margin: 0 0 8px;"><i class="fas fa-check-circle" style="color: var(--success); margin-right: 6px;"></i>Students receive textbook-grounded answers</p>
+              <p style="margin: 0 0 8px;"><i class="fas fa-check-circle" style="color: var(--success); margin-right: 6px;"></i>Answers formatted by exam marks (2/5/10/15)</p>
+              <p style="margin: 0 0 8px;"><i class="fas fa-check-circle" style="color: var(--success); margin-right: 6px;"></i>Source citations (book, chapter, pages)</p>
+              <p style="margin: 0;"><i class="fas fa-check-circle" style="color: var(--success); margin-right: 6px;"></i>AI restricted to uploaded content only</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resource List -->
+        <div class="glass-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            <h3 style="margin: 0;"><i class="fas fa-book-open" style="color: var(--primary); margin-right: 8px;"></i>Uploaded Textbooks</h3>
+            <button class="btn btn-secondary" style="font-size: 13px; padding: 8px 16px;" onclick="loadEbooks()">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+          </div>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Subject</th>
+                  <th>Uploaded</th>
+                  <th>Knowledge Chunks</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ebooks-table-body">
+                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No resources uploaded yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+      <!-- END ACADEMIC RESOURCES SECTION -->
+
     </main>
 
   </div>
@@ -305,11 +422,42 @@
     </div>
   </div>
 
+  <!-- Edit Ebook Metadata Modal -->
+  <div class="modal-overlay" id="edit-ebook-modal">
+    <div class="glass-panel modal-box">
+      <div class="modal-header">
+        <h3><i class="fas fa-file-pdf" style="color: var(--primary);"></i> Edit Resource Metadata</h3>
+        <i class="fas fa-times close-modal" onclick="closeEditEbookModal()"></i>
+      </div>
+      <form id="edit-ebook-form">
+        <input type="hidden" id="edit-ebook-id">
+        <div class="form-group">
+          <label class="form-label">Resource Title</label>
+          <input type="text" id="edit-ebook-title" class="form-control" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label">Subject / Category</label>
+          <input type="text" id="edit-ebook-subject" class="form-control" required>
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
+          <input type="checkbox" id="edit-ebook-allow-download" style="width: 18px; height: 18px; cursor: pointer;">
+          <label for="edit-ebook-allow-download" style="font-size: 13px; color: var(--text-color); cursor: pointer; user-select: none; margin: 0;">Allow students to download this PDF</label>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button type="button" class="btn btn-secondary" onclick="closeEditEbookModal()" style="flex: 1;">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="flex: 1;">Save Metadata</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/admin.js"></script>
   <script src="js/main.js"></script>
+  <link rel="stylesheet" href="css/assistant.css">
 </body>
 </html>
